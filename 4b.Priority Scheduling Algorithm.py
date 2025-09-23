@@ -1,63 +1,32 @@
-def findWaitingTime(processes,n,wt):
+def priorityScheduling(processes):
+    # Sort by priority (highest first)
+    processes.sort(key=lambda x: x[2], reverse=True)
 
-    wt[0]=0
+    n = len(processes)
+    waiting_time = [0] * n
+    turnaround_time = [0] * n
 
-    for i in range(1,n):
+    # Waiting time calculation
+    for i in range(1, n):
+        waiting_time[i] = waiting_time[i-1] + processes[i-1][1]
 
-        wt[i]=processes[i-1][1]+wt[i-1]
-
-def findTurnAroundTime(processes,n,wt,tat):
-
+    # Turnaround time calculation
     for i in range(n):
+        turnaround_time[i] = processes[i][1] + waiting_time[i]
 
-        tat[i]=processes[i][1]+wt[i]
-
-def findavgTime(processes,n):
-
-    wt=[0]*n
-
-    tat=[0]*n
-
-    findWaitingTime(processes,n,wt)
-
-    findTurnAroundTime(processes,n,wt,tat)
-
-    print("\nProcesses \tBurst Time \tWaitingtime","\tTurn-Around Time")
-
-    total_wt=0
-
-    total_tat=0
-
+    # Print table
+    print("Process\tBurst\tPriority\tWaiting\tTurnaround")
+    total_wt, total_tat = 0, 0
     for i in range(n):
+        total_wt += waiting_time[i]
+        total_tat += turnaround_time[i]
+        print(f"P{processes[i][0]}\t{processes[i][1]}\t{processes[i][2]}\t\t{waiting_time[i]}\t{turnaround_time[i]}")
 
-        total_wt=total_wt+wt[i]
+    # Averages
+    print("\nAverage Waiting Time:", total_wt/n)
+    print("Average Turnaround Time:", total_tat/n)
 
-        total_tat=total_tat+tat[i]
 
-        print("",processes[i][0],"\t\t",processes[i][1],"\t\t",wt[i],"\t\t",tat[i])
-
-    print("\nAverage waiting time=%.5f"%(total_wt/n))
-
-    print("Average turn around time=",(total_tat/n))
-
-def priorityScheduling(proc,n):
-
-    proc = sorted(proc,key=lambda proc:proc[2],reverse=True);
-
-    print("Order in which processes getd executed")
-
-    for i in proc:
-
-        print(i[0],end="")
-
-    findavgTime(proc,n)
-
-if __name__=="__main__":
-
-    proc =[[1,10,1],[2,5,0],[3,8,1]]
-
-    n=3
-
-    print("Priority Scheduling Algorithm")
-
-    priorityScheduling(proc,n)
+# Example
+processes = [[1, 10, 1], [2, 5, 0], [3, 8, 1]]
+priorityScheduling(processes)
